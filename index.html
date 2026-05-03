@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Bhai 🎁</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Kalam:wght@400;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0d0a1a;
+  --gold: #e8b84b;
+  --gold2: #f5d07a;
+  --red: #c0392b;
+  --red2: #e74c3c;
+  --cream: #fef9ef;
+  --ink: #2c1810;
+  --ribbon: #c0392b;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Kalam', cursive;
+  position: relative;
+}
+
+/* ── PARTICLES / CONFETTI ── */
+#confetti-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* ── FLOATING SPARKLES ── */
+.bg-sparkle {
+  position: fixed;
+  pointer-events: none;
+  font-size: var(--s);
+  opacity: 0.18;
+  animation: drift var(--d) ease-in-out infinite alternate var(--dl);
+  color: var(--gold);
+}
+@keyframes drift {
+  from { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+  to   { transform: translateY(-30px) rotate(20deg); opacity: 0.3; }
+}
+
+/* ── HINT TEXT ── */
+#hint {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Kalam', cursive;
+  font-size: 1rem;
+  color: rgba(232,184,75,0.7);
+  letter-spacing: 0.1em;
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+}
+@keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+/* ── SCENE ── */
+#scene {
+  position: relative;
+  width: 260px;
+  height: 400px;
+  cursor: pointer;
+  z-index: 10;
+}
+#scene:hover .box-body { filter: brightness(1.08); }
+
+/* ── BOX BODY ── */
+.box-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 160px;
+  background: linear-gradient(135deg, #a93226 0%, #c0392b 40%, #922b21 100%);
+  border-radius: 6px 6px 10px 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: filter 0.3s;
+  z-index: 3;
+}
+
+/* Vertical ribbon on box */
+.box-body::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translateX(-50%);
+  width: 28px; height: 100%;
+  background: linear-gradient(90deg, #8e1a0e, #e74c3c, #8e1a0e);
+  border-radius: 0 0 4px 4px;
+}
+
+/* shine */
+.box-body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px 6px 10px 10px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ── LID ── */
+.box-lid {
+  position: absolute;
+  bottom: 156px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 238px;
+  height: 44px;
+  background: linear-gradient(135deg, #c0392b, #e74c3c, #a93226);
+  border-radius: 8px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  transform-origin: center top;
+  transition: transform 0.7s cubic-bezier(.175,.885,.32,1.1);
+  z-index: 5;
+}
+/* Horizontal ribbon on lid */
+.box-lid::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translateX(-50%);
+  width: 28px; height: 100%;
+  background: linear-gradient(90deg, #8e1a0e, #e74c3c, #8e1a0e);
+}
+.box-lid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+}
+
+/* ── BOW ── */
+.bow {
+  position: absolute;
+  bottom: 196px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 52px;
+  z-index: 6;
+  transition: transform 0.7s cubic-bezier(.175,.885,.32,1.1), opacity 0.4s;
+  transform-origin: center bottom;
+}
+
+.bow-left, .bow-right {
+  position: absolute;
+  bottom: 14px;
+  width: 38px; height: 28px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: linear-gradient(135deg, #e8b84b, #f5d07a, #c9932a);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+}
+.bow-left {
+  left: 0;
+  transform: rotate(-30deg);
+  transform-origin: right bottom;
+}
+.bow-right {
+  right: 0;
+  transform: rotate(30deg);
+  transform-origin: left bottom;
+}
+.bow-center {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px; height: 20px;
+  background: radial-gradient(circle, #f5d07a, #c9932a);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.bow-tail-left, .bow-tail-right {
+  position: absolute;
+  bottom: 0;
+  width: 18px; height: 22px;
+  background: linear-gradient(180deg, #e8b84b, #c9932a);
+  border-radius: 0 0 10px 4px;
+}
+.bow-tail-left { left: 32px; transform: rotate(-10deg); border-radius: 0 0 4px 10px; }
+.bow-tail-right { right: 32px; transform: rotate(10deg); }
+
+/* ── OPEN STATE ── */
+#scene.open .box-lid {
+  transform: translateX(-50%) rotateX(-110deg);
+}
+#scene.open .bow {
+  transform: translateX(-50%) translateY(-40px) rotate(-5deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── LETTER ── */
+.letter-wrap {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(40px);
+  width: 200px;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.1s, transform 0.1s;
+  pointer-events: none;
+}
+#scene.open .letter-wrap {
+  animation: letterRise 1.2s cubic-bezier(.175,.885,.32,1.1) 0.4s forwards;
+  pointer-events: auto;
+}
+@keyframes letterRise {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(40px); }
+  30%  { opacity: 1; }
+  100% { opacity: 1; transform: translateX(-50%) translateY(-260px); }
+}
+
+/* Envelope shape */
+.envelope {
+  width: 200px;
+  background: var(--cream);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: visible;
+}
+
+/* Envelope flap (triangle top) */
+.envelope::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 100px solid transparent;
+  border-right: 100px solid transparent;
+  border-top: 68px solid #e8c88a;
+  z-index: 1; /* lower than text */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+/* Envelope V flap open (underneath) */
+.envelope::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 100px solid #ddb96a;
+  border-right: 100px solid #ddb96a;
+  border-top: 68px solid transparent;
+  z-index: 1;
+}
+
+.envelope-body {
+  padding: 1.2rem 1.2rem 1.2rem;
+  min-height: 130px;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.env-to {
+  font-family: 'Kalam', cursive;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  margin-top: 0.3rem;
+  color: #5a3d14;
+  font-weight: bold;
+}
+.env-seal {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px; height: 36px;
+  background: radial-gradient(circle, #e8b84b, #c9932a);
+  border-radius: 50%;
+  border: 2px solid #a07520;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+/* ── FULL LETTER MODAL ── */
+#letter-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,3,12,0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  padding: 1.5rem;
+}
+#letter-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.letter-paper {
+  background: #fef9ef;
+  width: min(540px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 3px;
+  padding: 3rem 3rem 2.5rem;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), inset 0 0 0 1px #d4b48340;
+  transform: translateY(40px) scale(0.95);
+  transition: transform 0.5s cubic-bezier(.175,.885,.32,1.1);
+
+  /* paper lines */
+  background-image:
+    linear-gradient(transparent calc(2rem - 1px), #e8d5b040 calc(2rem - 1px), #e8d5b040 2rem, transparent 2rem);
+  background-size: 100% 2rem;
+}
+#letter-modal.show .letter-paper {
+  transform: translateY(0) scale(1);
+}
+
+.paper-fold {
+  position: absolute;
+  top: 0; right: 0;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 40px 40px 0;
+  border-color: transparent #d4b483 transparent transparent;
+}
+.paper-fold::after {
+  content: '';
+  position: absolute;
+  top: 2px; right: -38px;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 36px 36px 0;
+  border-color: transparent #fef9ef transparent transparent;
+}
+
+.letter-date {
+  font-family: 'Kalam', cursive;
+  font-size: 0.8rem;
+  color: #a07850;
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.letter-salute {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #8b1a1a;
+  margin-bottom: 1.2rem;
+}
+
+.letter-text {
+  font-family: 'Kalam', cursive;
+  font-size: 1.08rem;
+  line-height: 2rem;
+  color: #2c1810;
+}
+.letter-text p { margin-bottom: 1rem; }
+
+.highlight-word {
+  background: linear-gradient(120deg, #ffe08290 0%, #ffb30090 100%);
+  padding: 0 3px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.letter-sign {
+  margin-top: 1.5rem;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #8b1a1a;
+  text-align: right;
+}
+.letter-heart {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  animation: heartbeat 1.2s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.close-btn {
+  margin-top: 2rem;
+  display: block;
+  width: 100%;
+  background: #8b1a1a;
+  color: #fef9ef;
+  border: none;
+  padding: 0.9rem;
+  font-family: 'Kalam', cursive;
+  font-size: 1.1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.05em;
+}
+.close-btn:hover { background: #a52020; transform: translateY(-2px); }
+
+/* scrollbar */
+.letter-paper::-webkit-scrollbar { width: 4px; }
+.letter-paper::-webkit-scrollbar-track { background: transparent; }
+.letter-paper::-webkit-scrollbar-thumb { background: #d4b483; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- hint -->
+<div id="hint">🎁 ଭାଇ Gift ଉପରେ click କରେ! 🎁</div>
+
+<!-- Scene -->
+<div id="scene" onclick="openGift()">
+  <!-- Bow -->
+  <div class="bow">
+    <div class="bow-left"></div>
+    <div class="bow-right"></div>
+    <div class="bow-center"></div>
+    <div class="bow-tail-left"></div>
+    <div class="bow-tail-right"></div>
+  </div>
+
+  <!-- Lid -->
+  <div class="box-lid"></div>
+
+  <!-- Letter inside box (rises out) -->
+  <div class="letter-wrap" id="letter-wrap" onclick="openLetter(event)">
+    <div class="envelope">
+      <div class="envelope-body">
+        <p class="env-to">✉ To:ମୋ ଭାଇ 💛</p>
+        <p class="env-to" style="margin-top:4px;">From: ସେନାପତି  </p>
+      </div>
+      <div class="env-seal">💌</div>
+    </div>
+  </div>
+
+  <!-- Box body -->
+  <div class="box-body"></div>
+</div>
+
+<!-- Full Letter Modal -->
+<div id="letter-modal">
+  <div class="letter-paper">
+    <div class="paper-fold"></div>
+
+    <p class="letter-date">May 2025</p>
+
+    <p class="letter-salute">ମୋର ପ୍ରିୟ ଭାଇ, 🌟❤️</p>
+
+    <div class="letter-text">
+      <p>
+       ୟାର୍, ସତ କହିବି ନା ଶବ୍ଦ କମ୍ ପଡ଼ିଯାଉଛି ତୋତେ<span class="highlight-word">thanks କହିବା 
+ପାଇଁ 🥹</span>
+ତା ପରେ ବି ଚେଷ୍ଟା କରୁଛି।
+
+      </p>
+      <p>
+        ତୁ ଯେତେବେଳେ ମୋତେ<span class="highlight-word">birthday wish କଲୁ 🎂🎉</span>
+        ସତରେ ମୋର ମନଟା ଭରି ଆସିଥିଲା। 🫂
+        ତୋର wish ଖାଲି ଗୋଟେ message ନଥିଲା,
+        ସେଥିରେ ତୋର ଭଲପାଇବା ଥିଲା ❤️, care ଥିଲା 🤍।
+      </p>
+      <p>
+
+ତୁ ଖାଲି ମୋର ଭାଇ ନୁହେଁ,
+ମୁଁ ତୋତେ <span class="highlight-word">ମୋ ବଡ଼ ଭାଇ</span>ଭଳି ମାନେ 🤝💖
+
+ଯେତେବେଳେ ବି କିଛି problem ହୁଏ 😔
+ମୁଁ ସିଧା <span class="highlight-word">ତୋ</span>ପାଖକୁ ଚାଲିଯାଏ।
+ସେଥିପାଇଁ ତୋତେ disturb କରୁଥିଲେ,
+<span class="highlight-word">କ୍ଷମା କରିଦେବୁ 🙏</span>
+କିନ୍ତୁ <span class="highlight-word">ତୋ</span> ଛଡ଼ା ଆଉ କାହା ଉପରେ 
+ଏତେ <span class="highlight-word">trust</span> ମୋର ନାହିଁ। ❤️
+<span class="highlight-word">ତୋତେ ଯେତେବେଳେ ବି help ମାଗିଚି 
+ତୁ କେବେ ମନା କରିନୁ 😁🥹
+ଧନ୍ୟବାଦ ତା ପାଇଁ </span>
+
+      </p>
+      <p>
+
+Midnight Maggie ସାଙ୍ଗେ ଖାଇବା 🍜🌙
+କଥା କଥାରେ ହସିବା 😂
+ତୋ ସହିତ time spend କରିବା —
+<span class="highlight-word">ଏହିସବୁ ମୋର ସବୁଠୁ ଦାମୀ ସ୍ମୃତି 💫💖</span>
+
+      </p>
+      <p>
+        ତୁ ଜାଣୁ ?
+<span class="highlight-word">ମୋ ପାଇଁ ସବୁଠୁ ବଡ଼ gift ହେଉଛନ୍ତି 🎁
+MAA ❤️, BABA ❤️ ଆଉ TU 🫂</span>
+
+ସେଥିପାଇଁ ମୋ ମନର ଗଭୀରରୁ କହୁଛି —
+<span class="highlight-word">ବହୁତ ବହୁତ ଧନ୍ୟବାଦ ଭାଇ 🥹💖</span>
+
+ମୋ birthday ଦିନେ ଭଗବାନଙ୍କୁ ଏତିକି prayer କରୁଛି 🙏✨
+ତୁ ସବୁବେଳେ ଏମିତି ମୋ life ରେ ରହ,
+ଖୁସିରେ ରହ 😊
+healthy ରହ 💪
+<span class="highlight-word">ଆଉ ସବୁବେଳେ ମୋର number one ଭାଇ ହେଇ ଥିଲୁ ଅଛୁ ଆଉ ରହିବୁ 👑❤️</span>
+
+Anyways… 🌸
+<span class="highlight-word">ପୁଣିଥରେ thanks ଭାଇ ❤️</span>
+ତୋର wishing, love, care ଆଉ ସବୁକିଛି ପାଇଁ 🫂✨
+
+ତୋତେ ଖରାପ ନ ଲାଗିବା ଯଦି ଗୋଟେ କଥା କହିବି… 😅
+
+<span class="highlight-word">LOVE YOU BHAI ❤️🫂</span>
+      </p>
+    </div>
+
+    <div class="letter-sign">— ତୋର ଭାଇ 💖</div>
+    <div class="letter-heart">❤️❤️❤️</div>
+
+    <button class="close-btn" onclick="closeLetter()">Click for ଫୁଲର ବର୍ଷା  🎉</button>
+  </div>
+</div>
+
+<script>
+/* ── SPARKLES in BG ── */
+const emojis = ['✨','⭐','🌟','💫','✦'];
+for (let i = 0; i < 18; i++) {
+  const el = document.createElement('div');
+  el.className = 'bg-sparkle';
+  el.textContent = emojis[i % emojis.length];
+  el.style.cssText = `
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    --s:${0.8+Math.random()*1.4}rem;
+    --d:${3+Math.random()*4}s;
+    --dl:${Math.random()*3}s;
+  `;
+  document.body.appendChild(el);
+}
+
+/* ── OPEN GIFT ── */
+let opened = false;
+function openGift() {
+  if (opened) return;
+
+  opened = true;
+
+  document.getElementById('scene').classList.add('open');
+  document.getElementById('hint').style.opacity = '0';
+
+  // MUSIC
+  const music = document.getElementById('bg-music');
+
+  music.volume = 0;
+
+  music.play();
+
+  let vol = 0;
+
+  const fade = setInterval(() => {
+    if (vol < 0.4) {
+      vol += 0.02;
+      music.volume = vol;
+    } else {
+      clearInterval(fade);
+    }
+  }, 100);
+
+  setTimeout(() => {
+    document.getElementById('hint').textContent =
+      '💌ଭାଇ ଚିଠି ଉପରେ click କରେ!';
+    document.getElementById('hint').style.opacity = '0.8';
+  }, 1400);
+}
+
+/* ── OPEN LETTER ── */
+function openLetter(e) {
+  e.stopPropagation();
+  if (!opened) return;
+  document.getElementById('letter-modal').classList.add('show');
+  document.getElementById('hint').style.opacity = '0';
+}
+
+function closeLetter() {
+  document.getElementById('letter-modal').classList.remove('show');
+
+  launchConfetti();
+
+  setTimeout(() => {
+    // Letter goes back into box
+    document.getElementById('scene').classList.remove('open');
+
+    // Restore hint
+    document.getElementById('hint').textContent = '🎁 ଭାଇ Gift ଉପରେ click କରେ!';
+    document.getElementById('hint').style.opacity = '0.8';
+
+    // Allow reopening
+    opened = false;
+  }, 500);
+}
+
+/* ── CONFETTI ── */
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const COLORS = ['#e8b84b','#f5d07a','#c0392b','#e74c3c','#fef9ef','#27ae60','#2980b9','#ff69b4'];
+let pieces = [];
+
+class Piece {
+  constructor() { this.reset(true); }
+  reset(init = false) {
+    this.x = Math.random() * canvas.width;
+    this.y = init ? Math.random() * canvas.height - canvas.height : -10;
+    this.w = 6 + Math.random() * 8;
+    this.h = 3 + Math.random() * 5;
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.speed = 2 + Math.random() * 4;
+    this.angle = Math.random() * Math.PI * 2;
+    this.rotation = (Math.random() - 0.5) * 0.15;
+    this.oscillate = Math.random() * 3;
+    this.oscillateSpeed = 0.03 + Math.random() * 0.04;
+    this.tick = Math.random() * 100;
+    this.shape = Math.random() > 0.5 ? 'rect' : 'circle';
+  }
+  update() {
+    this.y += this.speed;
+    this.angle += this.rotation;
+    this.tick += this.oscillateSpeed;
+    this.x += Math.sin(this.tick) * this.oscillate;
+    if (this.y > canvas.height + 20) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.fillStyle = this.color;
+    if (this.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, this.w / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+    }
+    ctx.restore();
+  }
+}
+
+let animating = false;
+
+function launchConfetti() {
+  if (animating) return;
+
+  pieces = Array.from({ length: 150 }, () => new Piece());
+
+  pieces.forEach(p => {
+    p.y = -20;
+    p.speed = 3 + Math.random() * 6;
+  });
+
+  animating = true;
+  animate();
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  pieces.forEach(p => {
+    p.update();
+    p.draw();
+  });
+
+  requestAnimationFrame(animate);
+}
+</script>
+<audio id="bg-music" loop>
+  <source src="bhai.mp3" type="audio/mpeg">
+</audio>
+</body>
+</html>
